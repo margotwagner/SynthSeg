@@ -1,0 +1,115 @@
+3rd ventricle
+4th ventricle
+CC Anterior
+CC Central
+CC Mid_Anterior
+CC Mid_Posterior
+CC Posterior
+allventricles
+brain-stem
+csf
+ctx-lh-bankssts
+ctx-lh-caudalanteriorcingulate
+ctx-lh-caudalmiddlefrontal
+ctx-lh-cuneus
+ctx-lh-entorhinal
+ctx-lh-frontalpole
+ctx-lh-fusiform
+ctx-lh-inferiorparietal
+ctx-lh-inferiortemporal
+ctx-lh-insula
+ctx-lh-isthmuscingulate
+ctx-lh-lateraloccipital
+ctx-lh-lateralorbitofrontal
+ctx-lh-lingual
+ctx-lh-medialorbitofrontal
+ctx-lh-middletemporal
+ctx-lh-paracentral
+ctx-lh-parahippocampal
+ctx-lh-parsopercularis
+ctx-lh-parsorbitalis
+ctx-lh-parstriangularis
+ctx-lh-pericalcarine
+ctx-lh-postcentral
+ctx-lh-posteriorcingulate
+ctx-lh-precentral
+ctx-lh-precuneus
+ctx-lh-rostralanteriorcingulate
+ctx-lh-rostralmiddlefrontal
+ctx-lh-superiorfrontal
+ctx-lh-superiorparietal
+ctx-lh-superiortemporal
+ctx-lh-supramarginal
+ctx-lh-temporalpole
+ctx-lh-transversetemporal
+ctx-rh-bankssts
+ctx-rh-caudalanteriorcingulate
+ctx-rh-caudalmiddlefrontal
+ctx-rh-cuneus
+ctx-rh-entorhinal
+ctx-rh-frontalpole
+ctx-rh-fusiform
+ctx-rh-inferiorparietal
+ctx-rh-inferiortemporal
+ctx-rh-insula
+ctx-rh-isthmuscingulate
+ctx-rh-lateraloccipital
+ctx-rh-lateralorbitofrontal
+ctx-rh-lingual
+ctx-rh-medialorbitofrontal
+ctx-rh-middletemporal
+ctx-rh-paracentral
+ctx-rh-parahippocampal
+ctx-rh-parsopercularis
+ctx-rh-parsorbitalis
+ctx-rh-parstriangularis
+ctx-rh-pericalcarine
+ctx-rh-postcentral
+ctx-rh-posteriorcingulate
+ctx-rh-precentral
+ctx-rh-precuneus
+ctx-rh-rostralanteriorcingulate
+ctx-rh-rostralmiddlefrontal
+ctx-rh-superiorfrontal
+ctx-rh-superiorparietal
+ctx-rh-superiortemporal
+ctx-rh-supramarginal
+ctx-rh-temporalpole
+ctx-rh-transversetemporal
+ctx-total
+ctx-totallh
+ctx-totalrh
+intracranialvolume
+latventricles
+left accumbens area
+left amygdala
+left caudate
+left cerebellum cortex
+left cerebellum white matter
+left cerebral white matter
+left hippocampus
+left inferior lateral ventricle
+left lateral ventricle
+left pallidum
+left putamen
+left thalamus
+left ventral DC
+left wm hypointensities
+right accumbens area
+right amygdala
+right caudate
+right cerebellum cortex
+right cerebellum white matter
+right cerebral white matter
+right hippocampus
+right inferior lateral ventricle
+right lateral ventricle
+right pallidum
+right putamen
+right thalamus
+right ventral DC
+right wm hypointensities
+subcorticalgrayvolume
+supratentorialvolume
+total intracranial
+wm hypointensities
