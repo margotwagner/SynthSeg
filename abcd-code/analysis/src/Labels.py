@@ -8,9 +8,15 @@ class Labels():
         self.dir = '/cnl/abcd/data/tabular/raw/'
         self.save_dir = '/cnl/abcd/data/labels/'
         self.shortname = 'abcd_cbcls01'
-        self.df = self.df()
-
-    def df(self):
+        self.dsm_df = self.dsm_df()
+        self.depr_df = self.depr_df()
+        self.anx_df = self.anx_df()
+        self.adhd_df = self.adhd_df()
+        self.opposit_df = self.opposit_df()
+        self.conduct_df = self.conduct_df()
+        self.somaticpr_df = self.somaticpr_df()
+        
+    def dsm_df(self):
         # read in txt file, skipping descriptions
         raw_inst_df = pd.read_csv(
             "{}{}.txt".format(
@@ -75,25 +81,164 @@ class Labels():
             dsm_feats,
             axis=1
         )
+        
+        return dsm_df
 
+    def depr_df(self):
+        
         # healthy subjects
-        healthy_subj = dsm_df.loc[
+        healthy_subj = self.dsm_df.loc[
             (
-                (dsm_df['depress_dsm5'] == 50.0)
-                & (dsm_df['anxdisord_dsm5'] == 50.0)
-                & (dsm_df['somaticpr_dsm5'] == 50.0)
-                & (dsm_df['adhd_dsm5'] == 50.0)
-                & (dsm_df['opposit_dsm5'] == 50.0)
-                & (dsm_df['conduct_dsm5'] == 50.0)
+                (self.dsm_df['depress_dsm5'] == 50.0)
+                & (self.dsm_df['anxdisord_dsm5'] == 50.0)
+                & (self.dsm_df['somaticpr_dsm5'] == 50.0)
+                & (self.dsm_df['adhd_dsm5'] == 50.0)
+                & (self.dsm_df['opposit_dsm5'] == 50.0)
+                & (self.dsm_df['conduct_dsm5'] == 50.0)
             )
             ].index
 
         # clinically depressed subjects
-        depress_subj = dsm_df[dsm_df["depress_dsm5"] > 69.0].index
+        depress_subj = self.dsm_df[self.dsm_df["depress_dsm5"] > 69.0].index
 
         subj = list(healthy_subj) + list(depress_subj)
 
-        df = dsm_df["depress_dsm5"].loc[subj]
+        df = self.dsm_df["depress_dsm5"].loc[subj]
+
+        df = (df > 69.0).astype(int)
+
+        df.index = [i.replace("_", "") for i in df.index]
+
+        return df
+    
+    def anx_df(self):
+        
+        # healthy subjects
+        healthy_subj = self.dsm_df.loc[
+            (
+                (self.dsm_df['depress_dsm5'] == 50.0)
+                & (self.dsm_df['anxdisord_dsm5'] == 50.0)
+                & (self.dsm_df['somaticpr_dsm5'] == 50.0)
+                & (self.dsm_df['adhd_dsm5'] == 50.0)
+                & (self.dsm_df['opposit_dsm5'] == 50.0)
+                & (self.dsm_df['conduct_dsm5'] == 50.0)
+            )
+            ].index
+
+        # clinically depressed subjects
+        depress_subj = self.dsm_df[self.dsm_df["anxdisord_dsm5"] > 69.0].index
+
+        subj = list(healthy_subj) + list(depress_subj)
+
+        df = self.dsm_df["anxdisord_dsm5"].loc[subj]
+
+        df = (df > 69.0).astype(int)
+
+        df.index = [i.replace("_", "") for i in df.index]
+
+        return df
+    
+    def adhd_df(self):
+        
+        # healthy subjects
+        healthy_subj = self.dsm_df.loc[
+            (
+                (self.dsm_df['depress_dsm5'] == 50.0)
+                & (self.dsm_df['anxdisord_dsm5'] == 50.0)
+                & (self.dsm_df['somaticpr_dsm5'] == 50.0)
+                & (self.dsm_df['adhd_dsm5'] == 50.0)
+                & (self.dsm_df['opposit_dsm5'] == 50.0)
+                & (self.dsm_df['conduct_dsm5'] == 50.0)
+            )
+            ].index
+
+        # clinically depressed subjects
+        depress_subj = self.dsm_df[self.dsm_df["adhd_dsm5"] > 69.0].index
+
+        subj = list(healthy_subj) + list(depress_subj)
+
+        df = self.dsm_df["adhd_dsm5"].loc[subj]
+
+        df = (df > 69.0).astype(int)
+
+        df.index = [i.replace("_", "") for i in df.index]
+
+        return df
+    
+    def opposit_df(self):
+        
+        # healthy subjects
+        healthy_subj = self.dsm_df.loc[
+            (
+                (self.dsm_df['depress_dsm5'] == 50.0)
+                & (self.dsm_df['anxdisord_dsm5'] == 50.0)
+                & (self.dsm_df['somaticpr_dsm5'] == 50.0)
+                & (self.dsm_df['adhd_dsm5'] == 50.0)
+                & (self.dsm_df['opposit_dsm5'] == 50.0)
+                & (self.dsm_df['conduct_dsm5'] == 50.0)
+            )
+            ].index
+
+        # clinically depressed subjects
+        depress_subj = self.dsm_df[self.dsm_df["opposit_dsm5"] > 69.0].index
+
+        subj = list(healthy_subj) + list(depress_subj)
+
+        df = self.dsm_df["opposit_dsm5"].loc[subj]
+
+        df = (df > 69.0).astype(int)
+
+        df.index = [i.replace("_", "") for i in df.index]
+
+        return df
+    
+    def conduct_df(self):
+        
+        # healthy subjects
+        healthy_subj = self.dsm_df.loc[
+            (
+                (self.dsm_df['depress_dsm5'] == 50.0)
+                & (self.dsm_df['anxdisord_dsm5'] == 50.0)
+                & (self.dsm_df['somaticpr_dsm5'] == 50.0)
+                & (self.dsm_df['adhd_dsm5'] == 50.0)
+                & (self.dsm_df['opposit_dsm5'] == 50.0)
+                & (self.dsm_df['conduct_dsm5'] == 50.0)
+            )
+            ].index
+
+        # clinically depressed subjects
+        depress_subj = self.dsm_df[self.dsm_df["conduct_dsm5"] > 69.0].index
+
+        subj = list(healthy_subj) + list(depress_subj)
+
+        df = self.dsm_df["conduct_dsm5"].loc[subj]
+
+        df = (df > 69.0).astype(int)
+
+        df.index = [i.replace("_", "") for i in df.index]
+
+        return df
+    
+    def somaticpr_df(self):
+        
+        # healthy subjects
+        healthy_subj = self.dsm_df.loc[
+            (
+                (self.dsm_df['depress_dsm5'] == 50.0)
+                & (self.dsm_df['anxdisord_dsm5'] == 50.0)
+                & (self.dsm_df['somaticpr_dsm5'] == 50.0)
+                & (self.dsm_df['adhd_dsm5'] == 50.0)
+                & (self.dsm_df['opposit_dsm5'] == 50.0)
+                & (self.dsm_df['conduct_dsm5'] == 50.0)
+            )
+            ].index
+
+        # clinically depressed subjects
+        depress_subj = self.dsm_df[self.dsm_df["somaticpr_dsm5"] > 69.0].index
+
+        subj = list(healthy_subj) + list(depress_subj)
+
+        df = self.dsm_df["somaticpr_dsm5"].loc[subj]
 
         df = (df > 69.0).astype(int)
 
@@ -102,7 +247,7 @@ class Labels():
         return df
 
     def save_df(self):
-        self.df.to_csv(
+        self.depr_df.to_csv(
             self.save_dir + "baseline-bin-healthy-depress.csv",
             sep=","
         )

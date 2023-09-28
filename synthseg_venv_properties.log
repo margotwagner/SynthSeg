@@ -1,0 +1,220 @@
+System info:
+--------------------------------------------------------------------------------
+__Time Stamp__
+Report started (local time)                   : 2023-02-02 18:52:00.576660
+UTC start time                                : 2023-02-03 02:52:00.576666
+Running time (s)                              : 9.649266
+
+__Hardware Information__
+Machine                                       : x86_64
+CPU Name                                      : westmere
+CPU Count                                     : 12
+Number of accessible CPUs                     : 24
+List of accessible CPUs cores                 : 0-23
+CFS Restrictions (CPUs worth of runtime)      : None
+
+CPU Features                                  : 64bit cmov cx16 cx8 fxsr mmx
+                                                popcnt sahf sse sse2 sse3 sse4.1
+                                                sse4.2 ssse3
+
+Memory Total (MB)                             : 36189
+Memory Available (MB)                         : 26382
+
+__OS Information__
+Platform Name                                 : Linux-4.19.0-23-amd64-x86_64-with-glibc2.17
+Platform Release                              : 4.19.0-23-amd64
+OS Name                                       : Linux
+OS Version                                    : #1 SMP Debian 4.19.269-1 (2022-12-20)
+OS Specific Version                           : ?
+Libc Version                                  : glibc 2.28
+
+__Python Information__
+Python Compiler                               : GCC 11.2.0
+Python Implementation                         : CPython
+Python Version                                : 3.8.16
+Python Locale                                 : en_US.UTF-8
+
+__Numba Toolchain Versions__
+Numba Version                                 : 0.56.4
+llvmlite Version                              : 0.39.1
+
+__LLVM Information__
+LLVM Version                                  : 11.1.0
+
+__CUDA Information__
+CUDA Device Initialized                       : True
+CUDA Driver Version                           : 11.4
+CUDA Runtime Version                          : 11.2
+CUDA NVIDIA Bindings Available                : False
+CUDA NVIDIA Bindings In Use                   : False
+CUDA Detect Output:
+Found 1 CUDA devices
+id 0         b'Quadro K2200'                 [SUPPORTED (DEPRECATED)]
+                      Compute Capability: 5.0
+                           PCI Device ID: 0
+                              PCI Bus ID: 6
+                                    UUID: GPU-24177970-4d90-bcf4-c6c6-45dd154d7010
+                                Watchdog: Enabled
+             FP32/FP64 Performance Ratio: 32
+Summary:
+	1/1 devices are supported
+
+CUDA Libraries Test Output:
+Finding nvvm from System
+	named  libnvvm.so.4.0.0
+	trying to open library...	ok
+Finding cudart from System
+	named  libcudart.so.11.2.146
+	trying to open library...	ok
+Finding cudadevrt from System
+	named  libcudadevrt.a
+Finding libdevice from System
+	trying to open library...	ok
+
+
+__NumPy Information__
+NumPy Version                                 : 1.18.5
+NumPy Supported SIMD features                 : ('None found.',)
+NumPy Supported SIMD dispatch                 : ('None found.',)
+NumPy Supported SIMD baseline                 : ('None found.',)
+NumPy AVX512_SKX support detected             : False
+
+__SVML Information__
+SVML State, config.USING_SVML                 : False
+SVML Library Loaded                           : False
+llvmlite Using SVML Patched LLVM              : True
+SVML Operational                              : False
+
+__Threading Layer Information__
+TBB Threading Layer Available                 : False
++--> Disabled due to Unknown import problem.
+OpenMP Threading Layer Available              : True
++-->Vendor: GNU
+Workqueue Threading Layer Available           : True
++-->Workqueue imported successfully.
+
+__Numba Environment Variable Information__
+None found.
+
+__Conda Information__
+Conda Build                                   : 3.22.0
+Conda Env                                     : 22.9.0
+Conda Platform                                : linux-64
+Conda Python Version                          : 3.9.13.final.0
+Conda Root Writable                           : True
+
+__Installed Packages__
+_libgcc_mutex             0.1                        main  
+_openmp_mutex             5.1                       1_gnu  
+absl-py                   1.3.0                    pypi_0    pypi
+asttokens                 2.1.0                    pypi_0    pypi
+astunparse                1.6.3                    pypi_0    pypi
+backcall                  0.2.0                    pypi_0    pypi
+ca-certificates           2023.01.10           h06a4308_0  
+cachetools                4.2.4                    pypi_0    pypi
+certifi                   2022.9.24                pypi_0    pypi
+charset-normalizer        2.1.1                    pypi_0    pypi
+contourpy                 1.0.6                    pypi_0    pypi
+cycler                    0.11.0                   pypi_0    pypi
+decorator                 5.1.1                    pypi_0    pypi
+executing                 1.2.0                    pypi_0    pypi
+fonttools                 4.38.0                   pypi_0    pypi
+gast                      0.3.3                    pypi_0    pypi
+google-auth               1.35.0                   pypi_0    pypi
+google-auth-oauthlib      0.4.6                    pypi_0    pypi
+google-pasta              0.2.0                    pypi_0    pypi
+grpcio                    1.50.0                   pypi_0    pypi
+h5py                      2.10.0                   pypi_0    pypi
+idna                      3.4                      pypi_0    pypi
+imageio                   2.22.4                   pypi_0    pypi
+importlib-metadata        5.0.0                    pypi_0    pypi
+ipython                   8.6.0                    pypi_0    pypi
+jedi                      0.18.1                   pypi_0    pypi
+joblib                    1.2.0                    pypi_0    pypi
+keras                     2.3.1                    pypi_0    pypi
+keras-applications        1.0.8                    pypi_0    pypi
+keras-preprocessing       1.1.2                    pypi_0    pypi
+kiwisolver                1.4.4                    pypi_0    pypi
+ld_impl_linux-64          2.38                 h1181459_1  
+libffi                    3.4.2                h6a678d5_6  
+libgcc-ng                 11.2.0               h1234567_1  
+libgomp                   11.2.0               h1234567_1  
+libstdcxx-ng              11.2.0               h1234567_1  
+llvmlite                  0.39.1                   pypi_0    pypi
+markdown                  3.4.1                    pypi_0    pypi
+markupsafe                2.1.1                    pypi_0    pypi
+matplotlib                3.2.1                    pypi_0    pypi
+matplotlib-inline         0.1.6                    pypi_0    pypi
+ncurses                   6.4                  h6a678d5_0  
+nibabel                   4.0.2                    pypi_0    pypi
+numba                     0.56.4                   pypi_0    pypi
+numpy                     1.18.5                   pypi_0    pypi
+oauthlib                  3.2.2                    pypi_0    pypi
+opencv-python             4.6.0.66                 pypi_0    pypi
+openssl                   1.1.1s               h7f8727e_0  
+opt-einsum                3.3.0                    pypi_0    pypi
+packaging                 21.3                     pypi_0    pypi
+pandas                    1.0.3                    pypi_0    pypi
+parso                     0.8.3                    pypi_0    pypi
+pexpect                   4.8.0                    pypi_0    pypi
+pickleshare               0.7.5                    pypi_0    pypi
+pillow                    9.3.0                    pypi_0    pypi
+pip                       22.3.1           py38h06a4308_0  
+prompt-toolkit            3.0.32                   pypi_0    pypi
+protobuf                  3.20.3                   pypi_0    pypi
+ptyprocess                0.7.0                    pypi_0    pypi
+pure-eval                 0.2.2                    pypi_0    pypi
+pyasn1                    0.4.8                    pypi_0    pypi
+pyasn1-modules            0.2.8                    pypi_0    pypi
+pygments                  2.13.0                   pypi_0    pypi
+pyparsing                 3.0.9                    pypi_0    pypi
+python                    3.8.16               h7a1cb2a_2  
+python-dateutil           2.8.2                    pypi_0    pypi
+pytz                      2022.6                   pypi_0    pypi
+pyyaml                    6.0                      pypi_0    pypi
+readline                  8.2                  h5eee18b_0  
+requests                  2.28.1                   pypi_0    pypi
+requests-oauthlib         1.3.1                    pypi_0    pypi
+rsa                       4.9                      pypi_0    pypi
+scikit-learn              0.22.2.post1             pypi_0    pypi
+scipy                     1.4.1                    pypi_0    pypi
+seaborn                   0.10.0                   pypi_0    pypi
+setuptools                65.6.3           py38h06a4308_0  
+six                       1.16.0                   pypi_0    pypi
+sklearn                   0.0                      pypi_0    pypi
+sqlite                    3.40.1               h5082296_0  
+stack-data                0.6.1                    pypi_0    pypi
+tensorboard               2.2.2                    pypi_0    pypi
+tensorboard-data-server   0.6.1                    pypi_0    pypi
+tensorboard-plugin-wit    1.8.1                    pypi_0    pypi
+tensorflow-estimator      2.2.0                    pypi_0    pypi
+tensorflow-gpu            2.2.0                    pypi_0    pypi
+termcolor                 2.1.0                    pypi_0    pypi
+tk                        8.6.12               h1ccaba5_0  
+tqdm                      4.45.0                   pypi_0    pypi
+traitlets                 5.5.0                    pypi_0    pypi
+urllib3                   1.26.12                  pypi_0    pypi
+wcwidth                   0.2.5                    pypi_0    pypi
+werkzeug                  2.2.2                    pypi_0    pypi
+wheel                     0.37.1             pyhd3eb1b0_0  
+wrapt                     1.14.1                   pypi_0    pypi
+xz                        5.2.10               h5eee18b_1  
+zipp                      3.10.0                   pypi_0    pypi
+zlib                      1.2.13               h5eee18b_0  
+
+No errors reported.
+
+
+__Warning log__
+Warning (psutil): psutil cannot be imported. For more accuracy, consider installing it.
+--------------------------------------------------------------------------------
+If requested, please copy and paste the information between
+the dashed (----) lines, or from a given specific section as
+appropriate.
+
+=============================================================
+IMPORTANT: Please ensure that you are happy with sharing the
+contents of the information present, any information that you
+wish to keep private you should remove before sharing.
+=============================================================
+
