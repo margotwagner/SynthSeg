@@ -2,6 +2,7 @@ from scipy import stats
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
 
 
 class StatisticalAnalysis:
@@ -9,6 +10,7 @@ class StatisticalAnalysis:
         self,
         dataset_1,
         dataset_2,
+        scale=False,  # whether to standard scale the data
         dataset_names=["dataset_1", "dataset_2"],
         ind=True,  # if the datasets are independent
         verbose=False,
@@ -19,6 +21,14 @@ class StatisticalAnalysis:
         self.pvalue_threshold = 0.05
         self.verbose = verbose
         self.dataset_names = dataset_names
+        if scale:
+            self.scale_data()
+
+    def scale_data(self):
+        # standard scale the data
+        scaler = StandardScaler()
+        self.dataset_1 = scaler.fit_transform(self.dataset_1)
+        self.dataset_2 = scaler.fit_transform(self.dataset_2)
 
     def is_normal(self, feat):
         # Check if the data is normally distributed (shapiro-wilk)
@@ -44,6 +54,38 @@ class StatisticalAnalysis:
             is_normal = True
 
         return is_normal
+
+    def compare_scaled(self):
+        """Do statistical analysis on scaled dataset"""
+        if self.verbose:
+            print("STARTING ANALYSIS")
+            print("Assuming data has been scaled to a normal distribution.")
+        significant_combinations = []
+        stats_all = []
+
+        for feat in self.dataset_1.columns:
+            if self.verbose:
+                print(feat.upper())
+
+            if self.ind:
+                print("Using independent t-test to compare datasets.")
+                _, p = stats.ttest_ind(self.dataset_1[feat], self.dataset_2[feat])
+            else:
+                print("Using dependent t-test to compare datasets.")
+                _, p = stats.ttest_rel(self.dataset_1[feat], self.dataset_2)
+
+            stats_all.append([feat, p])
+            if p < self.pvalue_threshold:
+                significant_combinations.append([feat, p])
+
+        all_stats = pd.DataFrame(stats_all, columns=["feature", "p_value"]).sort_values(
+            by=["p_value"]
+        )
+        sig_vols = pd.DataFrame(
+            significant_combinations, columns=["feature", "p_value"]
+        ).sort_values(by=["p_value"])
+
+        return sig_vols, all_stats
 
     def compare(self):
         if self.verbose:
@@ -79,7 +121,7 @@ class StatisticalAnalysis:
                 _, p = stats.wilcoxon(self.dataset_1[feat], self.dataset_2[feat])
 
             stats_all.append([feat, p])
-            if p < 0.05:
+            if p < self.pvalue_threshold:
                 significant_combinations.append([feat, p])
 
         all_stats = pd.DataFrame(stats_all, columns=["feature", "p_value"]).sort_values(
