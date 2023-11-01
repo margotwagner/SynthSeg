@@ -29,13 +29,13 @@ from SynthSeg.brain_generator import BrainGenerator
 
 # script parameters
 n_examples = 5  # number of examples to generate in this script
-result_dir = './outputs_tutorial_2'  # folder where examples will be saved
+result_dir = "./outputs_tutorial_2"  # folder where examples will be saved
 
 
 # ---------- Input label maps and associated values ----------
 
 # folder containing label maps to generate images from (note that they must have a ".nii", ".nii.gz" or ".mgz" format)
-path_label_map = '../../data/training_label_maps'
+path_label_map = "../../data/training_label_maps"
 
 # Here we specify the structures in the label maps for which we want to generate intensities.
 # This is given as a list of label values, which do not necessarily need to be present in every label map.
@@ -60,7 +60,7 @@ path_label_map = '../../data/training_label_maps'
 #                               53,   # right hippocampus
 #                               57]   # right lesions
 # Note that plenty of structures are not represented here..... but it's just an example ! :)
-generation_labels = '../../data/labels_classes_priors/generation_labels.npy'
+generation_labels = "../../data/labels_classes_priors/generation_labels.npy"
 
 
 # We also have to specify the number of non-sided labels in order to differentiate them from the labels with
@@ -78,7 +78,7 @@ n_neutral_labels = 18
 # Note that in this example the labels 24 (CSF), and 507 (extra-cerebral soft tissues) are not predicted, or said
 # differently they are segmented as background.
 # Also, the left and right lesions (labels 25 and 57) are segmented as left and right white matter (labels 2 and 41).
-output_labels = '../../data/labels_classes_priors/synthseg_segmentation_labels.npy'
+output_labels = "../../data/labels_classes_priors/synthseg_segmentation_labels.npy"
 
 
 # ---------- Shape and resolution of the outputs ----------
@@ -101,7 +101,7 @@ output_shape = 160
 # Here we use uniform prior distribution to sample the means/stds of the GMM. Because we don't specify prior_means and
 # prior_stds, those priors will have default bounds of [0, 250], and [0, 35]. Those values enable to generate a wide
 # range of contrasts (often unrealistic), which will make the segmentation network contrast-agnostic.
-prior_distributions = 'uniform'
+prior_distributions = "uniform"
 
 # We regroup labels with similar tissue types into K "classes", so that intensities of similar regions are sampled
 # from the same Gaussian distribution. This is achieved by providing a list indicating the class of each label.
@@ -112,7 +112,7 @@ prior_distributions = 'uniform'
 #                                        generation_classes = [0,  1,   2, 3, 4, 5,  4,  6,  7,  8,  9,  8, 10]
 # In this example labels 3 and 17 are in the same *class* 4 (that has nothing to do with *label* 4), and thus will be
 # associated to the same Gaussian distribution when sampling the GMM.
-generation_classes = '../../data/labels_classes_priors/generation_classes.npy'
+generation_classes = "../../data/labels_classes_priors/generation_classes.npy"
 
 
 # ---------- Spatial augmentation ----------
@@ -124,11 +124,17 @@ generation_classes = '../../data/labels_classes_priors/generation_classes.npy'
 
 flipping = True  # enable right/left flipping
 scaling_bounds = 0.2  # the scaling coefficients will be sampled from U(1-scaling_bounds; 1+scaling_bounds)
-rotation_bounds = 15  # the rotation angles will be sampled from U(-rotation_bounds; rotation_bounds)
+rotation_bounds = (
+    15  # the rotation angles will be sampled from U(-rotation_bounds; rotation_bounds)
+)
 shearing_bounds = 0.012  # the shearing coefficients will be sampled from U(-shearing_bounds; shearing_bounds)
 translation_bounds = False  # no translation is performed, as this is already modelled by the random cropping
-nonlin_std = 4.  # this controls the maximum elastic deformation (higher = more deformation)
-bias_field_std = 0.7  # this controls the maximum bias field corruption (higher = more bias)
+nonlin_std = (
+    4.0  # this controls the maximum elastic deformation (higher = more deformation)
+)
+bias_field_std = (
+    0.7  # this controls the maximum bias field corruption (higher = more bias)
+)
 
 
 # ---------- Resolution parameters ----------
@@ -141,31 +147,40 @@ randomise_res = True
 # ------------------------------------------------------ Generate ------------------------------------------------------
 
 # instantiate BrainGenerator object
-brain_generator = BrainGenerator(labels_dir=path_label_map,
-                                 generation_labels=generation_labels,
-                                 n_neutral_labels=n_neutral_labels,
-                                 prior_distributions=prior_distributions,
-                                 generation_classes=generation_classes,
-                                 output_labels=output_labels,
-                                 n_channels=n_channels,
-                                 target_res=target_res,
-                                 output_shape=output_shape,
-                                 flipping=flipping,
-                                 scaling_bounds=scaling_bounds,
-                                 rotation_bounds=rotation_bounds,
-                                 shearing_bounds=shearing_bounds,
-                                 translation_bounds=translation_bounds,
-                                 nonlin_std=nonlin_std,
-                                 bias_field_std=bias_field_std,
-                                 randomise_res=randomise_res)
+brain_generator = BrainGenerator(
+    labels_dir=path_label_map,
+    generation_labels=generation_labels,
+    n_neutral_labels=n_neutral_labels,
+    prior_distributions=prior_distributions,
+    generation_classes=generation_classes,
+    output_labels=output_labels,
+    n_channels=n_channels,
+    target_res=target_res,
+    output_shape=output_shape,
+    flipping=flipping,
+    scaling_bounds=scaling_bounds,
+    rotation_bounds=rotation_bounds,
+    shearing_bounds=shearing_bounds,
+    translation_bounds=translation_bounds,
+    nonlin_std=nonlin_std,
+    bias_field_std=bias_field_std,
+    randomise_res=randomise_res,
+)
 
 for n in range(n_examples):
-
     # generate new image and corresponding labels
     im, lab = brain_generator.generate_brain()
 
     # save output image and label map
-    utils.save_volume(im, brain_generator.aff, brain_generator.header,
-                      os.path.join(result_dir, 'image_%s.nii.gz' % n))
-    utils.save_volume(lab, brain_generator.aff, brain_generator.header,
-                      os.path.join(result_dir, 'labels_%s.nii.gz' % n))
+    utils.save_volume(
+        im,
+        brain_generator.aff,
+        brain_generator.header,
+        os.path.join(result_dir, "image_%s.nii.gz" % n),
+    )
+    utils.save_volume(
+        lab,
+        brain_generator.aff,
+        brain_generator.header,
+        os.path.join(result_dir, "labels_%s.nii.gz" % n),
+    )

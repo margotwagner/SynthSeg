@@ -102,7 +102,7 @@ class ABCD:
         df = df["imgincl_t1w_include"]  # 0 = No; 1 = Yes
         df = df.rename("include")
 
-        return df.astype('int')
+        return df.astype("int")
 
     def qc_subjects_to_exclude(self):
         return self.qc_scores[self.qc_scores == 0].index
