@@ -27,8 +27,13 @@ class StatisticalAnalysis:
     def scale_data(self):
         # standard scale the data
         scaler = StandardScaler()
-        self.dataset_1 = scaler.fit_transform(self.dataset_1)
-        self.dataset_2 = scaler.fit_transform(self.dataset_2)
+        scaled_1 = scaler.fit_transform(self.dataset_1.to_numpy())
+        scaled_2 = scaler.fit_transform(self.dataset_2.to_numpy())
+
+        # convert back to dataframe
+        self.dataset_1 = pd.DataFrame(scaled_1, columns=self.dataset_1.columns, index=self.dataset_1.index)
+        self.dataset_2 = pd.DataFrame(scaled_2, columns=self.dataset_2.columns, index=self.dataset_2.index)
+
 
     def is_normal(self, feat):
         # Check if the data is normally distributed (shapiro-wilk)
