@@ -36,29 +36,55 @@ class StatisticalAnalysis:
 
 
     def is_normal(self, feat):
-        # Check if the data is normally distributed (shapiro-wilk)
+        # Check if dataset 1 is normally distributed
         if len(self.dataset_1[feat]) < 5000:
-            _, p = stats.shapiro(self.dataset_1[feat])
-            if p < self.pvalue_threshold:
-                is_normal = False
-                if self.verbose:
-                    print("Dataset 1 is not normally distributed.")
+            # For small samples, use shapiro-wilk
+            if len(self.dataset_1[feat]) < 50:
+                _, p = stats.shapiro(self.dataset_1[feat])
+            # For midsize samples, use kolmogorov-smirnov
             else:
-                _, p = stats.shapiro(self.dataset_2[feat])
-                if p < self.pvalue_threshold:
-                    is_normal = False
-                    if self.verbose:
-                        print("Dataset 2 is not normally distributed.")
-
-                # both distributions need to be normally distributed
-                else:
-                    is_normal = True
-                    if self.verbose:
-                        print("Both distributions are normally distributed.")
+                _, p = stats.kstest(self.dataset_1[feat], stats.norm.cdf)
+            # If p < 0.05, reject hypothesis that data is normal
+            if p < self.pvalue_threshold:
+                is_1_normal = False
+        # For large samples, assume normality (central limit theorem)
         else:
-            is_normal = True
+            is_1_normal = True
 
-        return is_normal
+        # Check if dataset 2 is normally distributed
+        if len(self.dataset_2[feat]) < 5000:
+            # For small samples, use shapiro-wilk
+            if len(self.dataset_2[feat]) < 50:
+                _, p = stats.shapiro(self.dataset_2[feat])
+            # For midsize samples, use kolmogorov-smirnov
+            else:
+                _, p = stats.kstest(self.dataset_2[feat], stats.norm.cdf)
+            # If p < 0.05, reject hypothesis that data is normal
+            if p < self.pvalue_threshold:
+                is_2_normal = False
+        # For large samples, assume normality (central limit theorem)
+        else:
+            is_2_normal = True
+
+        if self.verbose:
+            if is_1_normal:
+                print("Dataset 1 is normally distributed.")
+            else:
+                print("Dataset 1 is not normally distributed.")
+            if is_2_normal:
+                print("Dataset 2 is normally distributed.")
+            else:
+                print("Dataset 2 is not normally distributed.")
+
+        return (is_1_normal and is_2_normal)
+
+    def plot_hist(self, feat):
+        # plot histogram of feature
+        plt.figure(figsize=(10, 5))
+        sns.histplot(data=self.dataset_1, x=feat, color="blue", label=self.dataset_names[0], kde=True)
+        sns.histplot(data=self.dataset_2, x=feat, color="orange", label=self.dataset_names[1], kde=True)
+        plt.legend()
+        plt.show()
 
     def compare_scaled(self):
         """Do statistical analysis on scaled dataset"""
