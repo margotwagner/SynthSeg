@@ -8,6 +8,8 @@ from sklearn.preprocessing import (
     RobustScaler,
     QuantileTransformer,
 )
+import numpy as np
+pd.options.mode.chained_assignment = None  # default='warn'
 
 
 class StatisticalAnalysis:
@@ -103,7 +105,8 @@ class StatisticalAnalysis:
 
     def plot_hist(self, feat):
         # plot histogram of feature
-        plt.figure(figsize=(10, 5))
+        plt.figure(figsize=(10, 8))
+        plt.ticklabel_format(style="scientific", axis="both")
         sns.histplot(
             data=self.dataset_1,
             x=feat,
@@ -121,6 +124,7 @@ class StatisticalAnalysis:
             stat="density",
         )
         plt.legend()
+        plt.title(feat.upper())
         plt.show()
 
     def compare(self):
@@ -132,6 +136,15 @@ class StatisticalAnalysis:
         for feat in self.dataset_1.columns:
             if self.verbose:
                 print(feat.upper())
+                
+            # If feature is a ventricle, transform to log
+            if "ventricle" in feat:
+                self.dataset_1[feat] = self.dataset_1[feat].apply(
+                    lambda x: x if x == 0 else np.log(x)
+                )
+                self.dataset_2[feat] = self.dataset_2[feat].apply(
+                    lambda x: x if x == 0 else np.log(x)
+                ) 
 
             # Whether to check if data is normally distributed (only for small samples due to central limit theorem)
             if self.test_normalcy:
