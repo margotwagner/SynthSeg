@@ -2,7 +2,12 @@ from scipy import stats
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler, QuantileTransformer
+from sklearn.preprocessing import (
+    StandardScaler,
+    MinMaxScaler,
+    RobustScaler,
+    QuantileTransformer,
+)
 
 
 class StatisticalAnalysis:
@@ -10,21 +15,24 @@ class StatisticalAnalysis:
         self,
         dataset_1,
         dataset_2,
-        scale_type="minmax",
-        scale=False,  # whether to standard scale the data
-        dataset_names=["dataset_1", "dataset_2"],
-        ind=True,  # if the datasets are independent
+        ind=True,
+        scale=False,  # whether to scale the data
         verbose=False,
+        test_normalcy=False,
+        scale_type="minmax",
+        dataset_names=["dataset_1", "dataset_2"],
     ):
         self.dataset_1 = dataset_1
         self.dataset_2 = dataset_2
         self.ind = ind
-        self.pvalue_threshold = 0.05
-        self.verbose = verbose
-        self.dataset_names = dataset_names
-        self.scale_type = scale_type
-        if scale:
+        self.scale = scale
+        if self.scale:
             self.scale_data(type=self.scale_type)
+        self.verbose = verbose
+        self.test_normalcy = test_normalcy
+        self.dataset_names = dataset_names
+        self.pvalue_threshold = 0.05
+        self.scale_type = scale_type
 
     def scale_data(self, type):
         # min-max scale the data
@@ -40,9 +48,12 @@ class StatisticalAnalysis:
         scaled_2 = scaler.fit_transform(self.dataset_2.to_numpy())
 
         # convert back to dataframe
-        self.dataset_1 = pd.DataFrame(scaled_1, columns=self.dataset_1.columns, index=self.dataset_1.index)
-        self.dataset_2 = pd.DataFrame(scaled_2, columns=self.dataset_2.columns,index=self.dataset_2.index)
-
+        self.dataset_1 = pd.DataFrame(
+            scaled_1, columns=self.dataset_1.columns, index=self.dataset_1.index
+        )
+        self.dataset_2 = pd.DataFrame(
+            scaled_2, columns=self.dataset_2.columns, index=self.dataset_2.index
+        )
 
     def is_normal(self, feat):
         is_1_normal = False
@@ -88,47 +99,29 @@ class StatisticalAnalysis:
             else:
                 print("Dataset 2 is not normally distributed.")
 
-        return (is_1_normal and is_2_normal)
+        return is_1_normal and is_2_normal
 
     def plot_hist(self, feat):
         # plot histogram of feature
         plt.figure(figsize=(10, 5))
-        sns.histplot(data=self.dataset_1, x=feat, color="blue", label=self.dataset_names[0], kde=True, stat="density")
-        sns.histplot(data=self.dataset_2, x=feat, color="orange", label=self.dataset_names[1], kde=True, stat="density")
+        sns.histplot(
+            data=self.dataset_1,
+            x=feat,
+            color="blue",
+            label=self.dataset_names[0],
+            kde=True,
+            stat="density",
+        )
+        sns.histplot(
+            data=self.dataset_2,
+            x=feat,
+            color="orange",
+            label=self.dataset_names[1],
+            kde=True,
+            stat="density",
+        )
         plt.legend()
         plt.show()
-
-    def compare_scaled(self):
-        """Do statistical analysis on scaled dataset"""
-        if self.verbose:
-            print("STARTING ANALYSIS")
-            print("Assuming data has been scaled to a normal distribution.")
-        significant_combinations = []
-        stats_all = []
-
-        for feat in self.dataset_1.columns:
-            if self.verbose:
-                print(feat.upper())
-
-            if self.ind:
-                print("Using independent t-test to compare datasets.") if self.verbose else None
-                _, p = stats.ttest_ind(self.dataset_1[feat], self.dataset_2[feat])
-            else:
-                print("Using dependent t-test to compare datasets.") if self.verbose else None
-                _, p = stats.ttest_rel(self.dataset_1[feat], self.dataset_2)
-
-            stats_all.append([feat, p])
-            if p < self.pvalue_threshold:
-                significant_combinations.append([feat, p])
-
-        all_stats = pd.DataFrame(stats_all, columns=["feature", "p_value"]).sort_values(
-            by=["p_value"]
-        )
-        sig_vols = pd.DataFrame(
-            significant_combinations, columns=["feature", "p_value"]
-        ).sort_values(by=["p_value"])
-
-        return sig_vols, all_stats
 
     def compare(self):
         if self.verbose:
@@ -140,8 +133,13 @@ class StatisticalAnalysis:
             if self.verbose:
                 print(feat.upper())
 
-            # If not, use nonparametric test (wilcoxon for dependent samples)
-            is_normal = self.is_normal(feat)
+            # Whether to check if data is normally distributed (only for small samples due to central limit theorem)
+            if self.test_normalcy:
+                is_normal = self.is_normal(feat)
+            else:
+                is_normal = True
+
+            # Which test to use based on normalcy and independence
             if is_normal and self.ind:
                 if self.verbose:
                     print("Data is normally distributed and independent.")
@@ -152,6 +150,8 @@ class StatisticalAnalysis:
                     print("Data is normally distributed and dependent.")
                     print("Using dependent t-test to compare datasets.")
                 _, p = stats.ttest_rel(self.dataset_1[feat], self.dataset_2[feat])
+
+            # NOTE: These are non-parametric tests meaning they don't test mean
             elif not is_normal and self.ind:
                 if self.verbose:
                     print("Data is independent but not normally distributed.")
