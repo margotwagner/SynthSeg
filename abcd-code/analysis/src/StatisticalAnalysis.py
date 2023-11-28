@@ -2,7 +2,7 @@ from scipy import stats
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler, QuantileTransformer
 
 
 class StatisticalAnalysis:
@@ -10,6 +10,7 @@ class StatisticalAnalysis:
         self,
         dataset_1,
         dataset_2,
+        scale_type="minmax",
         scale=False,  # whether to standard scale the data
         dataset_names=["dataset_1", "dataset_2"],
         ind=True,  # if the datasets are independent
@@ -21,21 +22,32 @@ class StatisticalAnalysis:
         self.pvalue_threshold = 0.05
         self.verbose = verbose
         self.dataset_names = dataset_names
+        self.scale_type = scale_type
         if scale:
-            self.scale_data()
+            self.scale_data(type=self.scale_type)
 
-    def scale_data(self):
-        # standard scale the data
-        scaler = StandardScaler()
+    def scale_data(self, type):
+        # min-max scale the data
+        if type == "minmax":
+            scaler = MinMaxScaler()
+        elif type == "std":
+            scaler = StandardScaler()
+        elif type == "robust":
+            scaler = RobustScaler()
+        elif type == "gaussian":
+            scaler = QuantileTransformer(output_distribution="normal")
         scaled_1 = scaler.fit_transform(self.dataset_1.to_numpy())
         scaled_2 = scaler.fit_transform(self.dataset_2.to_numpy())
 
         # convert back to dataframe
         self.dataset_1 = pd.DataFrame(scaled_1, columns=self.dataset_1.columns, index=self.dataset_1.index)
-        self.dataset_2 = pd.DataFrame(scaled_2, columns=self.dataset_2.columns, index=self.dataset_2.index)
+        self.dataset_2 = pd.DataFrame(scaled_2, columns=self.dataset_2.columns,index=self.dataset_2.index)
 
 
     def is_normal(self, feat):
+        is_1_normal = False
+        is_2_normal = False
+
         # Check if dataset 1 is normally distributed
         if len(self.dataset_1[feat]) < 5000:
             # For small samples, use shapiro-wilk
@@ -45,8 +57,8 @@ class StatisticalAnalysis:
             else:
                 _, p = stats.kstest(self.dataset_1[feat], stats.norm.cdf)
             # If p < 0.05, reject hypothesis that data is normal
-            if p < self.pvalue_threshold:
-                is_1_normal = False
+            if p >= self.pvalue_threshold:
+                is_1_normal = True
         # For large samples, assume normality (central limit theorem)
         else:
             is_1_normal = True
@@ -60,8 +72,8 @@ class StatisticalAnalysis:
             else:
                 _, p = stats.kstest(self.dataset_2[feat], stats.norm.cdf)
             # If p < 0.05, reject hypothesis that data is normal
-            if p < self.pvalue_threshold:
-                is_2_normal = False
+            if p >= self.pvalue_threshold:
+                is_2_normal = True
         # For large samples, assume normality (central limit theorem)
         else:
             is_2_normal = True
@@ -81,8 +93,8 @@ class StatisticalAnalysis:
     def plot_hist(self, feat):
         # plot histogram of feature
         plt.figure(figsize=(10, 5))
-        sns.histplot(data=self.dataset_1, x=feat, color="blue", label=self.dataset_names[0], kde=True)
-        sns.histplot(data=self.dataset_2, x=feat, color="orange", label=self.dataset_names[1], kde=True)
+        sns.histplot(data=self.dataset_1, x=feat, color="blue", label=self.dataset_names[0], kde=True, stat="density")
+        sns.histplot(data=self.dataset_2, x=feat, color="orange", label=self.dataset_names[1], kde=True, stat="density")
         plt.legend()
         plt.show()
 
@@ -99,10 +111,10 @@ class StatisticalAnalysis:
                 print(feat.upper())
 
             if self.ind:
-                print("Using independent t-test to compare datasets.")
+                print("Using independent t-test to compare datasets.") if self.verbose else None
                 _, p = stats.ttest_ind(self.dataset_1[feat], self.dataset_2[feat])
             else:
-                print("Using dependent t-test to compare datasets.")
+                print("Using dependent t-test to compare datasets.") if self.verbose else None
                 _, p = stats.ttest_rel(self.dataset_1[feat], self.dataset_2)
 
             stats_all.append([feat, p])
