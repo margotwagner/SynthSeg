@@ -2,28 +2,33 @@ import pandas as pd
 
 
 class Labels:
-    def __init__(self):
+    def __init__(self, instrument="cbcl"):
         self.dir = "/cnl/abcd/data/tabular/raw/"
         self.save_dir = "/cnl/abcd/data/labels/"
-        self.shortname = "abcd_cbcls01"
-        self.cbcl_df = self.cbcl_df()
-        self.dsm_df = self.dsm_df()
-        self.aseba_df = self.aseba_df()
-        self.ctrl_subj = self.ctrl_subj()
-        self.depr_dsm_df = self.depr_dsm_df()
-        self.anx_dsm_df = self.anx_dsm_df()
-        self.adhd_dsm_df = self.adhd_dsm_df()
-        self.opposit_dsm_df = self.opposit_dsm_df()
-        self.conduct_dsm_df = self.conduct_dsm_df()
-        self.somatic_dsm_df = self.somatic_dsm_df()
-        self.attent_aseba_df = self.attent_aseba_df()
-        self.aggro_aseba_df = self.aggro_aseba_df()
-        self.anxdep_aseba_df = self.anxdep_aseba_df()
-        self.withdep_aseba_df = self.withdep_aseba_df()
-        self.somatic_aseba_df = self.somatic_aseba_df()
-        self.social_aseba_df = self.social_aseba_df()
-        self.thought_aseba_df = self.thought_aseba_df()
-        self.rulebreak_aseba_df = self.rulebreak_aseba_df()
+        if instrument == "cbcl":
+            self.shortname = "abcd_cbcls01"
+            self.cbcl_df = self.cbcl_df()
+            self.dsm_df = self.dsm_df()
+            self.aseba_df = self.aseba_df()
+            self.ctrl_subj = self.ctrl_subj()
+            self.depr_dsm_df = self.depr_dsm_df()
+            self.anx_dsm_df = self.anx_dsm_df()
+            self.adhd_dsm_df = self.adhd_dsm_df()
+            self.opposit_dsm_df = self.opposit_dsm_df()
+            self.conduct_dsm_df = self.conduct_dsm_df()
+            self.somatic_dsm_df = self.somatic_dsm_df()
+            self.attent_aseba_df = self.attent_aseba_df()
+            self.aggro_aseba_df = self.aggro_aseba_df()
+            self.anxdep_aseba_df = self.anxdep_aseba_df()
+            self.withdep_aseba_df = self.withdep_aseba_df()
+            self.somatic_aseba_df = self.somatic_aseba_df()
+            self.social_aseba_df = self.social_aseba_df()
+            self.thought_aseba_df = self.thought_aseba_df()
+            self.rulebreak_aseba_df = self.rulebreak_aseba_df()
+        elif instrument == "ksad":
+            print("ksad functionality not yet implemented")
+        else:
+            print("Instrument not recognized")
 
     def cbcl_df(self):
         """
