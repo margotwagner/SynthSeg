@@ -1,6 +1,7 @@
 from src.SynthSeg import SynthSeg
 from src.StatisticalAnalysis import StatisticalAnalysis
 
+
 def get_sig_rois(labels_df, run_qc=True):
     synthseg = SynthSeg(
         subjects=labels_df.index,
