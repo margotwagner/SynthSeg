@@ -9,6 +9,7 @@ from sklearn.preprocessing import (
     QuantileTransformer,
 )
 import numpy as np
+
 pd.options.mode.chained_assignment = None  # default='warn'
 
 
@@ -136,7 +137,7 @@ class StatisticalAnalysis:
         for feat in self.dataset_1.columns:
             if self.verbose:
                 print(feat.upper())
-                
+
             # If feature is a ventricle, transform to log
             if "ventricle" in feat:
                 self.dataset_1[feat] = self.dataset_1[feat].apply(
@@ -144,7 +145,7 @@ class StatisticalAnalysis:
                 )
                 self.dataset_2[feat] = self.dataset_2[feat].apply(
                     lambda x: x if x == 0 else np.log(x)
-                ) 
+                )
 
             # Whether to check if data is normally distributed (only for small samples due to central limit theorem)
             if self.test_normalcy:

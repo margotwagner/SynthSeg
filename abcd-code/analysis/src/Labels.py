@@ -6,15 +6,32 @@ class Labels:
         self.dir = "/cnl/abcd/data/tabular/raw/"
         self.save_dir = "/cnl/abcd/data/labels/"
         self.shortname = "abcd_cbcls01"
+        self.cbcl_df = self.cbcl_df()
         self.dsm_df = self.dsm_df()
-        self.depr_df = self.depr_df()
-        self.anx_df = self.anx_df()
-        self.adhd_df = self.adhd_df()
-        self.opposit_df = self.opposit_df()
-        self.conduct_df = self.conduct_df()
-        self.somaticpr_df = self.somaticpr_df()
+        self.aseba_df = self.aseba_df()
+        self.ctrl_subj = self.ctrl_subj()
+        self.depr_dsm_df = self.depr_dsm_df()
+        self.anx_dsm_df = self.anx_dsm_df()
+        self.adhd_dsm_df = self.adhd_dsm_df()
+        self.opposit_dsm_df = self.opposit_dsm_df()
+        self.conduct_dsm_df = self.conduct_dsm_df()
+        self.somatic_dsm_df = self.somatic_dsm_df()
 
-    def dsm_df(self):
+    def cbcl_df(self):
+        """
+        Preprocesses the dataframe by performing the following steps:
+        1. Reads in a txt file, skipping descriptions.
+        2. Filters the dataframe to only include baseline data.
+        3. Extracts all features from the baseline data.
+        4. Filters out irrelevant columns.
+        5. Drops rows with NaN values.
+        6. Renames the labels to be more human-readable.
+        7. Modifies the index of the dataframe.
+
+        Returns:
+            df (pandas.DataFrame): The preprocessed dataframe.
+        """
+
         # read in txt file, skipping descriptions
         raw_inst_df = pd.read_csv(
             "{}{}.txt".format(self.dir, self.shortname), sep="\t", low_memory=False
@@ -57,16 +74,44 @@ class Labels:
 
         df.index = [i.replace("_", "") for i in df.index]
 
-        # just looking at dsm classifications
-        dsm_feats = [k for k in df.keys() if "dsm" in k]
+        return df
 
-        dsm_df = df.filter(dsm_feats, axis=1)
+    def aseba_df(self):
+        """
+        Returns a DataFrame containing only the ASEBA syndrome classifications from the CBCL DataFrame.
+
+        Returns:
+            pandas.DataFrame: DataFrame containing only the DSM classifications.
+        """
+        # just looking at syndrome classifications
+        aseba_feats = [k for k in self.cbcl_df.keys() if "syn" in k]
+
+        aseba_df = self.cbcl_df.filter(aseba_feats, axis=1)
+
+        return aseba_df
+
+    def dsm_df(self):
+        """
+        Returns a DataFrame containing only the DSM classifications from the cbcl_df DataFrame.
+
+        Returns:
+            pandas.DataFrame: DataFrame containing only the DSM classifications.
+        """
+        # just looking at dsm classifications
+        dsm_feats = [k for k in self.cbcl_df.keys() if "dsm" in k]
+
+        dsm_df = self.cbcl_df.filter(dsm_feats, axis=1)
 
         return dsm_df
 
-    def depr_df(self):
-        # healthy subjects
-        healthy_subj = self.dsm_df.loc[
+    def ctrl_subj(self):
+        """
+        Returns a list of control subjects defined as measuring below the threshold.
+
+        Returns:
+            list: A list of control subjects.
+        """
+        ctrl_subj = self.dsm_df.loc[
             (
                 (self.dsm_df["depress_dsm5"] == 50.0)
                 & (self.dsm_df["anxdisord_dsm5"] == 50.0)
@@ -77,12 +122,22 @@ class Labels:
             )
         ].index
 
+        return list(ctrl_subj)
+
+    def build_disorder_df(self, disorder):
+        """
+        Returns a DataFrame containing the disorder labels for disordered subjects.
+
+        Returns:
+            pandas.DataFrame: A DataFrame with disorder labels for disordered subjects.
+        """
+
         # clinically depressed subjects
-        depress_subj = self.dsm_df[self.dsm_df["depress_dsm5"] > 69.0].index
+        disorder_subj = self.dsm_df[self.dsm_df[disorder] > 69.0].index
 
-        subj = list(healthy_subj) + list(depress_subj)
+        subj = self.ctrl_subj + list(disorder_subj)
 
-        df = self.dsm_df["depress_dsm5"].loc[subj]
+        df = self.dsm_df[disorder].loc[subj]
 
         df = (df > 69.0).astype(int)
 
@@ -90,135 +145,44 @@ class Labels:
 
         return df
 
-    def anx_df(self):
-        # healthy subjects
-        healthy_subj = self.dsm_df.loc[
-            (
-                (self.dsm_df["depress_dsm5"] == 50.0)
-                & (self.dsm_df["anxdisord_dsm5"] == 50.0)
-                & (self.dsm_df["somaticpr_dsm5"] == 50.0)
-                & (self.dsm_df["adhd_dsm5"] == 50.0)
-                & (self.dsm_df["opposit_dsm5"] == 50.0)
-                & (self.dsm_df["conduct_dsm5"] == 50.0)
-            )
-        ].index
+    def depr_dsm_df(self):
+        """
+        Returns a DataFrame containing the depression labels for clinically depressed subjects.
 
-        # clinically depressed subjects
-        depress_subj = self.dsm_df[self.dsm_df["anxdisord_dsm5"] > 69.0].index
+        Returns:
+            pandas.DataFrame: A DataFrame with depression labels for clinically depressed subjects.
+        """
 
-        subj = list(healthy_subj) + list(depress_subj)
+        return self.build_disorder_df("depress_dsm5")
 
-        df = self.dsm_df["anxdisord_dsm5"].loc[subj]
+    def anx_dsm_df(self):
+        """
+        Returns a DataFrame containing structural volumes for anxiety disorders based on DSM-5 criteria.
+        """
 
-        df = (df > 69.0).astype(int)
+        return self.build_disorder_df("anxdisord_dsm5")
 
-        df.index = [i.replace("_", "") for i in df.index]
+    def adhd_dsm_df(self):
+        """
+        Returns a dataframe containing structural volumes for ADHD (Attention-Deficit/Hyperactivity Disorder) based on DSM-5 criteria.
+        """
+        return self.build_disorder_df("adhd_dsm5")
 
-        return df
+    def opposit_dsm_df(self):
+        """
+        Returns a DataFrame containing containing structural volumes for oppositional defiance disorder labels based on DSM-5 criteria.
+        """
+        return self.build_disorder_df("opposit_dsm5")
 
-    def adhd_df(self):
-        # healthy subjects
-        healthy_subj = self.dsm_df.loc[
-            (
-                (self.dsm_df["depress_dsm5"] == 50.0)
-                & (self.dsm_df["anxdisord_dsm5"] == 50.0)
-                & (self.dsm_df["somaticpr_dsm5"] == 50.0)
-                & (self.dsm_df["adhd_dsm5"] == 50.0)
-                & (self.dsm_df["opposit_dsm5"] == 50.0)
-                & (self.dsm_df["conduct_dsm5"] == 50.0)
-            )
-        ].index
+    def conduct_dsm_df(self):
+        """
+        Returns a DataFrame containing structural volumes for conduct disorder labels based on DSM-5 criteria.
+        """
+        return self.build_disorder_df("conduct_dsm5")
 
-        # clinically depressed subjects
-        depress_subj = self.dsm_df[self.dsm_df["adhd_dsm5"] > 69.0].index
+    def somatic_dsm_df(self):
+        """
+        Returns a DataFrame containing structural volumes for somatic disorder labels based on DSM-5 criteria.
+        """
 
-        subj = list(healthy_subj) + list(depress_subj)
-
-        df = self.dsm_df["adhd_dsm5"].loc[subj]
-
-        df = (df > 69.0).astype(int)
-
-        df.index = [i.replace("_", "") for i in df.index]
-
-        return df
-
-    def opposit_df(self):
-        # healthy subjects
-        healthy_subj = self.dsm_df.loc[
-            (
-                (self.dsm_df["depress_dsm5"] == 50.0)
-                & (self.dsm_df["anxdisord_dsm5"] == 50.0)
-                & (self.dsm_df["somaticpr_dsm5"] == 50.0)
-                & (self.dsm_df["adhd_dsm5"] == 50.0)
-                & (self.dsm_df["opposit_dsm5"] == 50.0)
-                & (self.dsm_df["conduct_dsm5"] == 50.0)
-            )
-        ].index
-
-        # clinically depressed subjects
-        depress_subj = self.dsm_df[self.dsm_df["opposit_dsm5"] > 69.0].index
-
-        subj = list(healthy_subj) + list(depress_subj)
-
-        df = self.dsm_df["opposit_dsm5"].loc[subj]
-
-        df = (df > 69.0).astype(int)
-
-        df.index = [i.replace("_", "") for i in df.index]
-
-        return df
-
-    def conduct_df(self):
-        # healthy subjects
-        healthy_subj = self.dsm_df.loc[
-            (
-                (self.dsm_df["depress_dsm5"] == 50.0)
-                & (self.dsm_df["anxdisord_dsm5"] == 50.0)
-                & (self.dsm_df["somaticpr_dsm5"] == 50.0)
-                & (self.dsm_df["adhd_dsm5"] == 50.0)
-                & (self.dsm_df["opposit_dsm5"] == 50.0)
-                & (self.dsm_df["conduct_dsm5"] == 50.0)
-            )
-        ].index
-
-        # clinically depressed subjects
-        depress_subj = self.dsm_df[self.dsm_df["conduct_dsm5"] > 69.0].index
-
-        subj = list(healthy_subj) + list(depress_subj)
-
-        df = self.dsm_df["conduct_dsm5"].loc[subj]
-
-        df = (df > 69.0).astype(int)
-
-        df.index = [i.replace("_", "") for i in df.index]
-
-        return df
-
-    def somaticpr_df(self):
-        # healthy subjects
-        healthy_subj = self.dsm_df.loc[
-            (
-                (self.dsm_df["depress_dsm5"] == 50.0)
-                & (self.dsm_df["anxdisord_dsm5"] == 50.0)
-                & (self.dsm_df["somaticpr_dsm5"] == 50.0)
-                & (self.dsm_df["adhd_dsm5"] == 50.0)
-                & (self.dsm_df["opposit_dsm5"] == 50.0)
-                & (self.dsm_df["conduct_dsm5"] == 50.0)
-            )
-        ].index
-
-        # clinically depressed subjects
-        depress_subj = self.dsm_df[self.dsm_df["somaticpr_dsm5"] > 69.0].index
-
-        subj = list(healthy_subj) + list(depress_subj)
-
-        df = self.dsm_df["somaticpr_dsm5"].loc[subj]
-
-        df = (df > 69.0).astype(int)
-
-        df.index = [i.replace("_", "") for i in df.index]
-
-        return df
-
-    def save_df(self):
-        self.depr_df.to_csv(self.save_dir + "baseline-bin-healthy-depress.csv", sep=",")
+        return self.build_disorder_df("somaticpr_dsm5")
