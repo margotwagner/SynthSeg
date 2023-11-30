@@ -2,30 +2,35 @@ import pandas as pd
 
 
 class Labels:
-    def __init__(self, instrument="cbcl"):
+    def __init__(self, instrument="cbcl", disorder_type="dsm"):
         self.dir = "/cnl/abcd/data/tabular/raw/"
         self.save_dir = "/cnl/abcd/data/labels/"
-        if instrument == "cbcl":
+        self.instrument = instrument
+        self.disorder_type = disorder_type
+        if self.instrument == "cbcl":
             self.shortname = "abcd_cbcls01"
             self.cbcl_df = self.cbcl_df()
-            self.dsm_df = self.dsm_df()
-            self.aseba_df = self.aseba_df()
-            self.ctrl_subj = self.ctrl_subj()
-            self.depr_dsm_df = self.depr_dsm_df()
-            self.anx_dsm_df = self.anx_dsm_df()
-            self.adhd_dsm_df = self.adhd_dsm_df()
-            self.opposit_dsm_df = self.opposit_dsm_df()
-            self.conduct_dsm_df = self.conduct_dsm_df()
-            self.somatic_dsm_df = self.somatic_dsm_df()
-            self.attent_aseba_df = self.attent_aseba_df()
-            self.aggro_aseba_df = self.aggro_aseba_df()
-            self.anxdep_aseba_df = self.anxdep_aseba_df()
-            self.withdep_aseba_df = self.withdep_aseba_df()
-            self.somatic_aseba_df = self.somatic_aseba_df()
-            self.social_aseba_df = self.social_aseba_df()
-            self.thought_aseba_df = self.thought_aseba_df()
-            self.rulebreak_aseba_df = self.rulebreak_aseba_df()
-        elif instrument == "ksad":
+            if self.disorder_type == "dsm":
+                self.dsm_df = self.dsm_df()
+                self.ctrl_subj = self.ctrl_subj()
+                self.depr_dsm_df = self.depr_dsm_df()
+                self.anx_dsm_df = self.anx_dsm_df()
+                self.adhd_dsm_df = self.adhd_dsm_df()
+                self.opposit_dsm_df = self.opposit_dsm_df()
+                self.conduct_dsm_df = self.conduct_dsm_df()
+                self.somatic_dsm_df = self.somatic_dsm_df()
+            elif self.disorder_type == "aseba":
+                self.aseba_df = self.aseba_df()
+                self.ctrl_subj = self.ctrl_subj()
+                self.attent_aseba_df = self.attent_aseba_df()
+                self.aggro_aseba_df = self.aggro_aseba_df()
+                self.anxdep_aseba_df = self.anxdep_aseba_df()
+                self.withdep_aseba_df = self.withdep_aseba_df()
+                self.somatic_aseba_df = self.somatic_aseba_df()
+                self.social_aseba_df = self.social_aseba_df()
+                self.thought_aseba_df = self.thought_aseba_df()
+                self.rulebreak_aseba_df = self.rulebreak_aseba_df()
+        elif self.instrument == "ksad":
             print("ksad functionality not yet implemented")
         else:
             print("Instrument not recognized")
@@ -126,29 +131,43 @@ class Labels:
         Returns:
             list: A list of control subjects.
         """
-        ctrl_subj = self.dsm_df.loc[
-            (
-                (self.dsm_df["depress_dsm5"] == 50.0)
-                & (self.dsm_df["anxdisord_dsm5"] == 50.0)
-                & (self.dsm_df["somaticpr_dsm5"] == 50.0)
-                & (self.dsm_df["adhd_dsm5"] == 50.0)
-                & (self.dsm_df["opposit_dsm5"] == 50.0)
-                & (self.dsm_df["conduct_dsm5"] == 50.0)
-            )
-        ].index
+        if self.disorder_type == "dsm":
+            ctrl_subj = self.dsm_df.loc[
+                (
+                    (self.dsm_df["depress_dsm5"] == 50.0)
+                    & (self.dsm_df["anxdisord_dsm5"] == 50.0)
+                    & (self.dsm_df["somaticpr_dsm5"] == 50.0)
+                    & (self.dsm_df["adhd_dsm5"] == 50.0)
+                    & (self.dsm_df["opposit_dsm5"] == 50.0)
+                    & (self.dsm_df["conduct_dsm5"] == 50.0)
+                )
+            ].index
+        elif self.disorder_type == "aseba":
+            ctrl_subj = self.aseba_df.loc[
+                (
+                    (self.aseba_df["anxdep_syn"] == 50.0)
+                    & (self.aseba_df["withdep_syn"] == 50.0)
+                    & (self.aseba_df["somatic_syn"] == 50.0)
+                    & (self.aseba_df["social_syn"] == 50.0)
+                    & (self.aseba_df["thought_syn"] == 50.0)
+                    & (self.aseba_df["attention_syn"] == 50.0)
+                    & (self.aseba_df["rulebreak_syn"] == 50.0)
+                    & (self.aseba_df["aggressive_syn"] == 50.0)
+                )
+            ].index
 
         return list(ctrl_subj)
 
-    def build_disorder_df(self, disorder, type="dsm5"):
+    def build_disorder_df(self, disorder):
         """
         Returns a DataFrame containing the disorder labels for disordered subjects.
 
         Returns:
             pandas.DataFrame: A DataFrame with disorder labels for disordered subjects.
         """
-        if type == "dsm5":
+        if self.disorder_type == "dsm":
             disorder_df = self.dsm_df
-        elif type == "aseba":
+        elif self.disorder_type == "aseba":
             disorder_df = self.aseba_df
 
         # clinically depressed subjects
@@ -167,9 +186,6 @@ class Labels:
     def depr_dsm_df(self):
         """
         Returns a DataFrame containing the depression labels for clinically depressed subjects.
-
-        Returns:
-            pandas.DataFrame: A DataFrame with depression labels for clinically depressed subjects.
         """
 
         return self.build_disorder_df("depress_dsm5")
@@ -211,53 +227,53 @@ class Labels:
         Returns a DataFrame containing the depression labels for clincal ASEBA Anxious/Depressed subjects.
         """
 
-        return self.build_disorder_df("anxdep_syn", type="aseba")
+        return self.build_disorder_df("anxdep_syn")
 
     def withdep_aseba_df(self):
         """
         Returns a DataFrame containing the depression labels for clincal ASEBA Withdrawn/Depressed subjects.
         """
 
-        return self.build_disorder_df("withdep_syn", type="aseba")
+        return self.build_disorder_df("withdep_syn")
 
     def somatic_aseba_df(self):
         """
         Returns a DataFrame containing the depression labels for clincal ASEBA Somatic Complaints subjects.
         """
 
-        return self.build_disorder_df("somatic_syn", type="aseba")
+        return self.build_disorder_df("somatic_syn")
     
     def social_aseba_df(self):
         """
         Returns a DataFrame containing the depression labels for clinical ASEBA Social Problem subjects.
         """
 
-        return self.build_disorder_df("social_syn", type="aseba")
+        return self.build_disorder_df("social_syn")
 
     def thought_aseba_df(self):
         """
         Returns a DataFrame containing the depression labels for clincal ASEBA Thought Problem subjects.
         """
 
-        return self.build_disorder_df("thought_syn", type="aseba")
+        return self.build_disorder_df("thought_syn")
 
     def attent_aseba_df(self):
         """
         Returns a DataFrame containing the depression labels for clincal ASEBA Attention Problem subjects.
         """
 
-        return self.build_disorder_df("attention_syn", type="aseba")
+        return self.build_disorder_df("attention_syn")
 
     def rulebreak_aseba_df(self):
         """
         Returns a DataFrame containing the depression labels for clincal ASEBA Rule Breaking Behavior subjects.
         """
 
-        return self.build_disorder_df("rulebreak_syn", type="aseba")
+        return self.build_disorder_df("rulebreak_syn")
 
     def aggro_aseba_df(self):
         """
         Returns a DataFrame containing the depression labels for clincal ASEBA Aggressive Behavior subjects.
         """
 
-        return self.build_disorder_df("aggressive_syn", type="aseba")
+        return self.build_disorder_df("aggressive_syn")
