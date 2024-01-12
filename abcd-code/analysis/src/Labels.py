@@ -41,14 +41,11 @@ class Labels:
         raw_inst_df = pd.read_csv(
             "{}{}.txt".format(self.dir, "abcd_ehis01"), sep="\t", low_memory=False
         ).iloc[1:, :]
-        
+
         # just take baseline data for now
         baseline = raw_inst_df[raw_inst_df["eventname"] == "baseline_year_1_arm_1"]
 
-        feats = [
-            "src_subject_id",
-            "ehi1b" # writing hand 
-        ]
+        feats = ["src_subject_id", "ehi1b"]  # writing hand
         # NOTE: "If mixed handed, use the hand that the child writes with for NeuroCog and fMRI tasks." -> not using summary score due to this
 
         # filter to only include columns of interest & set index
@@ -56,7 +53,7 @@ class Labels:
 
         # Drop NaN rows
         df.dropna(inplace=True)
-        
+
         # convert to numeric
         df = df.astype("int")
 
@@ -70,14 +67,13 @@ class Labels:
 
         return df
 
-
     def metadata_df(self):
         """
         Returns a DataFrame containing the patient metadata for the CBCL dataset.
-        
+
         Currently includes subject sex and age.
         """
-        
+
         # read in txt file, skipping descriptions
         raw_inst_df = pd.read_csv(
             "{}{}.txt".format(self.dir, self.shortname), sep="\t", low_memory=False
@@ -107,17 +103,23 @@ class Labels:
         baseline.dropna(inplace=True)
 
         # filter to only include columns of interest
-        df = baseline.filter(["sex", "interview_age",], axis=1)
+        df = baseline.filter(
+            [
+                "sex",
+                "interview_age",
+            ],
+            axis=1,
+        )
 
         # rename age labels to be more human-readable
         df.rename(columns={"interview_age": "age"}, inplace=True)
-        
+
         # remove underscores from index
         df.index = [i.replace("_", "") for i in df.index]
-        
+
         # get handedness
         hand_df = self.get_handedness()
-        
+
         # merge handedness with metadata
         df = df.merge(hand_df, how="inner", left_index=True, right_index=True)
 
@@ -329,7 +331,7 @@ class Labels:
         """
 
         return self.build_disorder_df("somatic_syn")
-    
+
     def social_aseba_df(self):
         """
         Returns a DataFrame containing the depression labels for clinical ASEBA Social Problem subjects.

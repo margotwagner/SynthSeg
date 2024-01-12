@@ -126,9 +126,11 @@ class StatisticalAnalysis:
         )
         plt.legend()
         plt.title(feat.upper())
-        
+
         if save:
-            plt.savefig("../../figures/" + feat.replace(" ", "") + ".svg", format="svg", dpi=300)
+            plt.savefig(
+                "../../figures/" + feat.replace(" ", "") + ".svg", format="svg", dpi=300
+            )
 
     def compare(self):
         if self.verbose:
@@ -205,9 +207,12 @@ class StatisticalAnalysis:
         fig = sns.boxplot(data=df, x="dataset", y=feat)
         fig.ticklabel_format(style="scientific", axis="y")
         fig.set(title=f"{feat.upper()} Volume Estimation by Method")
-        fig.set(xlabel="Segmentation Method", ylabel=f"Estimated {feat.upper()} Volume (mm^3)")
-        
+        fig.set(
+            xlabel="Segmentation Method",
+            ylabel=f"Estimated {feat.upper()} Volume (mm^3)",
+        )
+
         sns.despine()
-        
+
         if save:
             plt.savefig("../../figures/" + feat + ".svg", format="svg", dpi=300)
