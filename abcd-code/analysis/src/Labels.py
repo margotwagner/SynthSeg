@@ -34,6 +34,94 @@ class Labels:
             print("ksad functionality not yet implemented")
         else:
             print("Instrument not recognized")
+        self.metadata_df = self.metadata_df()
+
+    def get_handedness(self):
+        # read in txt file, skipping descriptions
+        raw_inst_df = pd.read_csv(
+            "{}{}.txt".format(self.dir, "abcd_ehis01"), sep="\t", low_memory=False
+        ).iloc[1:, :]
+        
+        # just take baseline data for now
+        baseline = raw_inst_df[raw_inst_df["eventname"] == "baseline_year_1_arm_1"]
+
+        feats = [
+            "src_subject_id",
+            "ehi1b" # writing hand 
+        ]
+        # NOTE: "If mixed handed, use the hand that the child writes with for NeuroCog and fMRI tasks." -> not using summary score due to this
+
+        # filter to only include columns of interest & set index
+        df = baseline.filter(feats, axis=1).set_index("src_subject_id")
+
+        # Drop NaN rows
+        df.dropna(inplace=True)
+        
+        # convert to numeric
+        df = df.astype("int")
+
+        # map to binary left or right handed
+        df["hand"] = (df["ehi1b"] >= 0).astype(int)
+        df["hand"].replace({0: "L", 1: "R"}, inplace=True)
+        df.drop("ehi1b", axis=1, inplace=True)
+
+        # remove underscores from index
+        df.index = [i.replace("_", "") for i in df.index]
+
+        return df
+
+
+    def metadata_df(self):
+        """
+        Returns a DataFrame containing the patient metadata for the CBCL dataset.
+        
+        Currently includes subject sex and age.
+        """
+        
+        # read in txt file, skipping descriptions
+        raw_inst_df = pd.read_csv(
+            "{}{}.txt".format(self.dir, self.shortname), sep="\t", low_memory=False
+        ).iloc[1:, :]
+
+        # just take baseline data for now
+        baseline = raw_inst_df[raw_inst_df["eventname"] == "baseline_year_1_arm_1"]
+
+        # get all feats
+        feats = baseline.keys().tolist()[9:-2]
+
+        # ids
+        ids = [
+            "src_subject_id",
+            "interview_date",
+            "interview_age",
+            "sex",
+        ]
+
+        # isolate t-scores
+        feats = [f for f in feats if f.split("_")[-1] == "t"]
+
+        # filter out remaining columns
+        baseline = baseline.filter(ids + feats, axis=1).set_index("src_subject_id")
+
+        # Drop NaN rows
+        baseline.dropna(inplace=True)
+
+        # filter to only include columns of interest
+        df = baseline.filter(["sex", "interview_age",], axis=1)
+
+        # rename age labels to be more human-readable
+        df.rename(columns={"interview_age": "age"}, inplace=True)
+        
+        # remove underscores from index
+        df.index = [i.replace("_", "") for i in df.index]
+        
+        # get handedness
+        hand_df = self.get_handedness()
+        
+        # merge handedness with metadata
+        df = df.merge(hand_df, how="inner", left_index=True, right_index=True)
+
+        return df
 
     def cbcl_df(self):
         """
@@ -83,13 +171,12 @@ class Labels:
 
         # rename labels to be more human-readable
         labels = [k.split("_")[3] + "_" + k.split("_")[2] for k in df.keys()]
-
         rename_dict = {}
         for old, new in zip(df.keys(), labels):
             rename_dict[old] = new
-
         df.rename(columns=rename_dict, inplace=True)
 
+        # remove underscores from index
         df.index = [i.replace("_", "") for i in df.index]
 
         return df

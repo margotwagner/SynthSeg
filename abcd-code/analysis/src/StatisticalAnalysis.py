@@ -104,7 +104,7 @@ class StatisticalAnalysis:
 
         return is_1_normal and is_2_normal
 
-    def plot_hist(self, feat):
+    def plot_hist(self, feat, save=False):
         # plot histogram of feature
         plt.figure(figsize=(10, 8))
         plt.ticklabel_format(style="scientific", axis="both")
@@ -126,7 +126,9 @@ class StatisticalAnalysis:
         )
         plt.legend()
         plt.title(feat.upper())
-        plt.show()
+        
+        if save:
+            plt.savefig("../../figures/" + feat.replace(" ", "") + ".svg", format="svg", dpi=300)
 
     def compare(self):
         if self.verbose:
@@ -190,11 +192,22 @@ class StatisticalAnalysis:
 
         return sig_vols, all_stats
 
-    def plot_feat(self, feat):
+    def plot_feat(self, feat, save=False):
         # merge datasets to use seaborn
         self.dataset_1["dataset"] = self.dataset_names[0]
         self.dataset_2["dataset"] = self.dataset_names[1]
         df = pd.concat([self.dataset_1, self.dataset_2])
 
-        plt.figure(figsize=(10, 5))
-        sns.boxplot(data=df, x="dataset", y=feat)
+        plt.figure(figsize=(12, 7))
+        sns.set_style("whitegrid")
+        sns.set_context("poster")
+        sns.set_palette("Set2")
+        fig = sns.boxplot(data=df, x="dataset", y=feat)
+        fig.ticklabel_format(style="scientific", axis="y")
+        fig.set(title=f"{feat.upper()} Volume Estimation by Method")
+        fig.set(xlabel="Segmentation Method", ylabel=f"Estimated {feat.upper()} Volume (mm^3)")
+        
+        sns.despine()
+        
+        if save:
+            plt.savefig("../../figures/" + feat + ".svg", format="svg", dpi=300)
