@@ -7,7 +7,7 @@ class SynthSeg:
         subjects="all",
         run_qc=False,
         run_qc_min_score=0.65,
-        run_qc_max_failed_regions=1
+        run_qc_max_failed_regions=1,
     ):
         self.dir = "/cnl/abcd/data/imaging/smri/interim/synthseg/baseline/"
         self.subjects = subjects
@@ -16,7 +16,9 @@ class SynthSeg:
         if run_qc:
             self.run_qc_min_score = run_qc_min_score
             self.run_qc_max_failed_regions = run_qc_max_failed_regions
-            self.qc_df = self.qc_df(self.run_qc_min_score, self.run_qc_max_failed_regions)
+            self.qc_df = self.qc_df(
+                self.run_qc_min_score, self.run_qc_max_failed_regions
+            )
 
     def df(self):
         """Attribute setter for SynthSeg ROI volumes"""

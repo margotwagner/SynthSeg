@@ -30,20 +30,24 @@ from SynthSeg.predict import predict
 # Input images must have a .nii, .nii.gz, or .mgz extension.
 # Note that path_images can also be the path to an entire folder, in which case all the images within this folder will
 # be segmented. In this case, please provide path_segm (and possibly path_posteriors, and path_resampled) as folder.
-path_images = '/a/path/to/an/image/im.nii.gz'
+path_images = "/a/path/to/an/image/im.nii.gz"
 # path to the output segmentation
-path_segm = './outputs_tutorial_4/predicted_segmentations/im_seg.nii.gz'
+path_segm = "./outputs_tutorial_4/predicted_segmentations/im_seg.nii.gz"
 # we can also provide paths for optional files containing the probability map for all predicted labels
-path_posteriors = './outputs_tutorial_4/predicted_information/im_post.nii.gz'
+path_posteriors = "./outputs_tutorial_4/predicted_information/im_post.nii.gz"
 # and for a csv file that will contain the volumes of each segmented structure
-path_vol = './outputs_tutorial_4/predicted_information/volumes.csv'
+path_vol = "./outputs_tutorial_4/predicted_information/volumes.csv"
 
 # of course we need to provide the path to the trained model (here we use the main synthseg model).
-path_model = '../../models/synthseg_1.0.h5'
+path_model = "../../models/synthseg_1.0.h5"
 # but we also need to provide the path to the segmentation labels used during training
-path_segmentation_labels = '../../data/labels_classes_priors/synthseg_segmentation_labels.npy'
+path_segmentation_labels = (
+    "../../data/labels_classes_priors/synthseg_segmentation_labels.npy"
+)
 # optionally we can give a numpy array with the names corresponding to the structures in path_segmentation_labels
-path_segmentation_names = '../../data/labels_classes_priors/synthseg_segmentation_names.npy'
+path_segmentation_names = (
+    "../../data/labels_classes_priors/synthseg_segmentation_names.npy"
+)
 
 # We can now provide various parameters to control the preprocessing of the input.
 # First we can play with the size of the input. Remember that the size of input must be divisible by 2**n_levels, so the
@@ -54,9 +58,11 @@ cropping = 192
 # Finally, we finish preprocessing the input by resampling it to the resolution at which the network has been trained to
 # produce predictions. If the input image has a resolution outside the range [target_res-0.05, target_res+0.05], it will
 # automatically be resampled to target_res.
-target_res = 1.
+target_res = 1.0
 # Note that if the image is indeed resampled, you have the option to save the resampled image.
-path_resampled = './outputs_tutorial_4/predicted_information/im_resampled_target_res.nii.gz'
+path_resampled = (
+    "./outputs_tutorial_4/predicted_information/im_resampled_target_res.nii.gz"
+)
 
 # After the image has been processed by the network, there are again various options to postprocess it.
 # First, we can apply some test-time augmentation by flipping the input along the right-left axis and segmenting
@@ -77,7 +83,7 @@ sigma_smoothing = 0.5
 #                                       topological_classes = [0,  0,  0,  1, 1, 2,  3,  1,  4,  4,  5,  6,  7]
 # Here we regroup labels 2 and 3 in the same topological class, same for labels 41 and 42. The topological class of
 # unsegmented structures must be set to 0 (like for 24 and 507).
-topology_classes = '../../data/labels_classes_priors/synthseg_topological_classes.npy'
+topology_classes = "../../data/labels_classes_priors/synthseg_topological_classes.npy"
 # Finally, we can also operate a strict version of biggest connected component, to get rid of unwanted noisy label
 # patch that can sometimes occur in the background. If so, we do recommend to use the smoothing option described above.
 keep_biggest_component = True
@@ -88,7 +94,7 @@ n_levels = 5
 nb_conv_per_level = 2
 conv_size = 3
 unet_feat_count = 24
-activation = 'elu'
+activation = "elu"
 feat_multiplier = 2
 
 # Finally, we can set up an evaluation step after all images have been segmented.
@@ -97,7 +103,7 @@ feat_multiplier = 2
 # single image or to a folder). If provided as a folder, ground truths must be sorted in the same order as images in
 # path_images.
 # Just set this to None if you do not want to run evaluation.
-gt_folder = '/the/path/to/the/ground_truth/gt.nii.gz'
+gt_folder = "/the/path/to/the/ground_truth/gt.nii.gz"
 # Dice scores will be computed and saved as a numpy array in the folder containing the segmentation(s).
 # This numpy array will be organised as follows: rows correspond to structures, and columns to subjects. Importantly,
 # rows are given in a sorted order.
@@ -120,26 +126,28 @@ gt_folder = '/the/path/to/the/ground_truth/gt.nii.gz'
 compute_distances = True
 
 # All right, we're ready to make predictions !!
-predict(path_images,
-        path_segm,
-        path_model,
-        path_segmentation_labels,
-        n_neutral_labels=n_neutral_labels,
-        path_posteriors=path_posteriors,
-        path_resampled=path_resampled,
-        path_volumes=path_vol,
-        names_segmentation=path_segmentation_names,
-        cropping=cropping,
-        target_res=target_res,
-        flip=flip,
-        topology_classes=topology_classes,
-        sigma_smoothing=sigma_smoothing,
-        keep_biggest_component=keep_biggest_component,
-        n_levels=n_levels,
-        nb_conv_per_level=nb_conv_per_level,
-        conv_size=conv_size,
-        unet_feat_count=unet_feat_count,
-        feat_multiplier=feat_multiplier,
-        activation=activation,
-        gt_folder=gt_folder,
-        compute_distances=compute_distances)
+predict(
+    path_images,
+    path_segm,
+    path_model,
+    path_segmentation_labels,
+    n_neutral_labels=n_neutral_labels,
+    path_posteriors=path_posteriors,
+    path_resampled=path_resampled,
+    path_volumes=path_vol,
+    names_segmentation=path_segmentation_names,
+    cropping=cropping,
+    target_res=target_res,
+    flip=flip,
+    topology_classes=topology_classes,
+    sigma_smoothing=sigma_smoothing,
+    keep_biggest_component=keep_biggest_component,
+    n_levels=n_levels,
+    nb_conv_per_level=nb_conv_per_level,
+    conv_size=conv_size,
+    unet_feat_count=unet_feat_count,
+    feat_multiplier=feat_multiplier,
+    activation=activation,
+    gt_folder=gt_folder,
+    compute_distances=compute_distances,
+)
