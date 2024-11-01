@@ -141,7 +141,7 @@ class fMRI_Segmentation:
 
 
     def band_pass_filt_fmri(self):
-        raw_filenames = ["cortex_fMRI_segmented", "fMRI_segmented"]
+        raw_filenames = ["fMRI_segmented"]
 
         for raw in raw_filenames:
             data_to_filter = glob.glob(os.path.join(self.saving_path, "**", f"{raw}*.csv"), recursive=True)
@@ -188,8 +188,9 @@ class fMRI_Segmentation:
             subject = [item for item in data.split("/") if item.startswith("sub-") and len(item) < 20][0]
             
             # Check if the fMRI file is already segmented
-            segmented_fmri_path = os.path.join(self.saving_path, subject, f"cortex_fMRI_segmented_{subject}_{run}.csv")
+            segmented_fmri_path = os.path.join(self.saving_path, subject, f"fMRI_segmented_{subject}_{run}.csv")
             if os.path.exists(segmented_fmri_path):
+                print('exists')
                 continue
 
             print(f"Segmenting {subject} ({i})")
@@ -228,9 +229,6 @@ class fMRI_Segmentation:
                 target_ants = ants.from_numpy(fMRI_volume.get_fdata(), origin=tuple(fMRI_volume.affine[:3, 3]), spacing=tuple(fMRI_volume.header.get_zooms()))
                 source_label_ants = ants.from_numpy(transformed_nifti_image.get_fdata(), origin=tuple(transformed_nifti_image.affine[:3, 3]), spacing=tuple(transformed_nifti_image.header.get_zooms()))
 
-                # Calculate RMSE before registration
-                rmse_before = self.compute_rmse(target_ants, source_label_ants)
-
                 # Perform rigid registration to align fMRI and sMRI segmentation
                 registration_result = ants.registration(fixed=target_ants, moving=source_label_ants, type_of_transform='Rigid', interpolation='None')
 
@@ -263,8 +261,8 @@ class fMRI_Segmentation:
                     os.makedirs(subject_path, exist_ok=True)
 
                     # pd.DataFrame(cortex_time_series).to_csv(f"cortex_fMRI_segmented_{subject}_{run}.csv", index=None)
-                    pd.DataFrame(fMRI_seg_ts).to_csv(f"fMRI_segmented_{subject}_{run}.csv", index=None)
-                    print(f"Segmentation completed for {subject}")
+                    pd.DataFrame(fMRI_seg_ts).to_csv(f"{subject_path}/fMRI_segmented_{subject}_{run}.csv", index=None)
+                    print(f"Segmentation saved at {subject_path}/fMRI_segmented_{subject}_{run}.csv")
 
                 except Exception as confound_error:
                     print(f"No confounds file or error for {subject}: {confound_error}")
@@ -272,5 +270,5 @@ class fMRI_Segmentation:
             except Exception as e:
                 print(f"Error segmenting {subject}: {e}")
                 error_log.append(f"Segmentation error: {subject}")
-
+        
         return error_log
